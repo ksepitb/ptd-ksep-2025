@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import Logo from "@/public/next.svg";
+import Logo from "@/public/ptdlogosvg.svg";
 import Aos from "aos";
 import "aos/dist/aos.css";
+
 interface NavLink {
   name: string;
   href: string;
@@ -107,14 +108,14 @@ const Navbar = () => {
                 <span
                   className={
                     isActive
-                      ? "bg-gradient-to-b from-[#FFEED2] to-[#C2A2E8] text-transparent bg-clip-text"
+                      ? "bg-gradient-to-b from-[#FFEED2] to-[#A3863D] text-transparent bg-clip-text"
                       : "text-white hover:text-[#FFEED2]"
                   }
                 >
                   {link.name}
                 </span>
                 {isActive && (
-                  <span className="absolute bottom-[18px] left-1/2 -translate-x-1/2 h-[1px] w-[80%] bg-gradient-to-r from-[#FFEED2] to-[#C2A2E8] rounded-full" />
+                  <span className="absolute bottom-[18px] left-1/2 -translate-x-1/2 h-[1px] w-[80%] bg-gradient-to-r from-[#FFEED2] to-[#A3863D] rounded-full" />
                 )}
               </Link>
             );
@@ -122,7 +123,7 @@ const Navbar = () => {
 
           <Link
             href="/daftar"
-            className="inset-shadow-sm inset-shadow-indigo-500 hidden md:flex items-center bg-gradient-to-r from-[#D9D9D9] to-[#C2A1E9] text-[#420C81] font-bold rounded-full transition-transform duration-300 hover:scale-105 py-2 px-8"
+            className="inset-shadow-sm inset-shadow-black hidden md:flex items-center bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] font-bold rounded-full transition-transform duration-300 hover:scale-105 py-2 px-8"
           >
             Daftar
           </Link>
@@ -170,7 +171,7 @@ const Navbar = () => {
                 <span
                   className={
                     isActive
-                      ? "bg-gradient-to-b from-[#FFEED2] to-[#C2A2E8] text-transparent bg-clip-text"
+                      ? "bg-gradient-to-b from-[#FFEED2] to-[#A3863D] text-transparent bg-clip-text"
                       : "text-white hover:text-[#FFEED2]"
                   }
                 >
@@ -182,7 +183,7 @@ const Navbar = () => {
           <Link
             href="/daftar"
             onClick={() => setMobileMenuOpen(false)}
-            className="inset-shadow-sm inset-shadow-indigo-500 mt-8 text-xl font-bold bg-gradient-to-r from-[#D9D9D9] to-[#C2A1E9] text-[#420C81] rounded-full py-3 px-12"
+            className="inset-shadow-sm inset-shadow-indigo-500 mt-8 text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-3 px-12"
           >
             Daftar
           </Link>
