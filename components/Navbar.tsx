@@ -14,9 +14,9 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
-  { name: "Event", href: "/event" },
-  { name: "ERC", href: "/erc" },
-  { name: "BCC", href: "/bcc" },
+  { name: "???", href: "/" },
+  { name: "???", href: "/" },
+  { name: "???", href: "/" },
 ];
 
 const MenuIcon = ({ className = "" }) => (
@@ -122,10 +122,10 @@ const Navbar = () => {
           })}
 
           <Link
-            href="/daftar"
+            href="/"
             className="inset-shadow-sm inset-shadow-black hidden md:flex items-center bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] font-bold rounded-full transition-transform duration-300 hover:scale-105 py-2 px-8"
           >
-            Daftar
+            ???
           </Link>
 
           <div className="md:hidden">
