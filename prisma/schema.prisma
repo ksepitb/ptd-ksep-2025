@@ -71,9 +71,9 @@ model Verification {
 
 // Kajasep-specific fields
 model Kajasep {
-  id                String  @id @default(cuid())
-  userId            String  @unique
-  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              user      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name              String
   jurusan           String
   idLine            String
@@ -81,21 +81,24 @@ model Kajasep {
   mbti              String
   hobby             String
   tigaKata          String // 3kata field
-  preferensiDejasep String  @db.Text
+  preferensiDejasep String    @db.Text
   photoUrl          String? // Cloudinary URL
-  amountDejasep     Int     @default(0)
+  amountDejasep     Int       @default(1) // 1 or 2, max choosers = amountDejasep + 1
+  chosenBy          Dejasep[] // Dejasep users who chose this Kajasep
 
   @@map("kajasep")
 }
 
 // Dejasep-specific fields
 model Dejasep {
-  id          String @id @default(cuid())
-  userId      String @unique
-  user        user   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String
-  nomorCaksep String
-  fakultas    String
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  nomorCaksep      String
+  fakultas         String
+  chosenKajasepId  String?  // The Kajasep they chose (can only choose 1)
+  chosenKajasep    Kajasep? @relation(fields: [chosenKajasepId], references: [id])
 
   @@map("dejasep")
 }

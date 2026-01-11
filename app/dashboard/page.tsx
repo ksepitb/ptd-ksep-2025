@@ -17,8 +17,18 @@ export default async function DashboardPage() {
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: {
-      kajasep: true,
-      dejasep: true,
+      kajasep: {
+        include: {
+          _count: {
+            select: { chosenBy: true },
+          },
+        },
+      },
+      dejasep: {
+        include: {
+          chosenKajasep: true,
+        },
+      },
     },
   });
 

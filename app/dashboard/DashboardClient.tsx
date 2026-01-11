@@ -3,6 +3,7 @@
 import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 interface KajasepData {
   id: string;
@@ -16,6 +17,21 @@ interface KajasepData {
   preferensiDejasep: string;
   photoUrl: string | null;
   amountDejasep: number;
+  _count?: {
+    chosenBy: number;
+  };
+}
+
+interface ChosenKajasep {
+  id: string;
+  name: string;
+  jurusan: string;
+  idLine: string;
+  instagram: string;
+  mbti: string;
+  hobby: string;
+  tigaKata: string;
+  photoUrl: string | null;
 }
 
 interface DejasepData {
@@ -23,6 +39,8 @@ interface DejasepData {
   name: string;
   nomorCaksep: string;
   fakultas: string;
+  chosenKajasepId: string | null;
+  chosenKajasep: ChosenKajasep | null;
 }
 
 interface UserData {
@@ -41,6 +59,7 @@ export default function DashboardClient({ user }: { user: UserData }) {
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
+    router.refresh();
   };
 
   const accountType = user.kajasep
@@ -132,6 +151,16 @@ export default function DashboardClient({ user }: { user: UserData }) {
               Kajasep Profile
             </h2>
 
+            {/* Chooser Count */}
+            {user.kajasep._count && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-[#FFEED2]/10 to-[#A3863D]/10 border border-[#A3863D]/30 rounded-2xl">
+                <p className="text-[#FFEED2] font-medium">
+                  Dejasep yang memilihmu: {user.kajasep._count.chosenBy} /{" "}
+                  {user.kajasep.amountDejasep + 1}
+                </p>
+              </div>
+            )}
+
             {/* Photo */}
             {user.kajasep.photoUrl && (
               <div className="mb-6 flex justify-center">
@@ -197,6 +226,120 @@ export default function DashboardClient({ user }: { user: UserData }) {
           </div>
         )}
 
+        {/* Chosen Kajasep for Dejasep */}
+        {user.dejasep?.chosenKajasep && (
+          <div className="backdrop-blur-xl bg-gradient-to-r from-[#FFEED2]/5 to-[#A3863D]/5 border border-[#A3863D]/30 rounded-3xl p-8 shadow-2xl mb-8">
+            <h2 className="text-xl font-semibold text-[#FFEED2] mb-6 flex items-center gap-2">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+              Kajasep Pilihanmu
+            </h2>
+
+            <div className="flex gap-6">
+              {/* Photo */}
+              <div className="flex-shrink-0">
+                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white/10 border-2 border-[#A3863D]/30">
+                  {user.dejasep.chosenKajasep.photoUrl ? (
+                    <Image
+                      src={user.dejasep.chosenKajasep.photoUrl}
+                      alt={user.dejasep.chosenKajasep.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                      <svg
+                        className="w-10 h-10"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Info */}
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-white mb-1">
+                  {user.dejasep.chosenKajasep.name}
+                </h3>
+                <p className="text-gray-400 mb-4">
+                  {user.dejasep.chosenKajasep.jurusan}
+                </p>
+
+                <div className="flex flex-wrap gap-3">
+                  <span className="inline-flex items-center px-3 py-1 bg-white/5 rounded-lg text-sm text-gray-300">
+                    MBTI: {user.dejasep.chosenKajasep.mbti}
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 bg-white/5 rounded-lg text-sm text-gray-300">
+                    Line: {user.dejasep.chosenKajasep.idLine}
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 bg-white/5 rounded-lg text-sm text-gray-300">
+                    IG: {user.dejasep.chosenKajasep.instagram}
+                  </span>
+                </div>
+
+                <p className="mt-3 text-sm text-gray-400 italic">
+                  &quot;{user.dejasep.chosenKajasep.tigaKata}&quot;
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CTA for Dejasep without chosen Kajasep */}
+        {user.dejasep && !user.dejasep.chosenKajasep && (
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[#FFEED2]/20 to-[#A3863D]/20 flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-[#FFEED2]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-white mb-2">
+              Belum Memilih Kajasep
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Kamu belum memilih Kajasep favoritmu. Yuk pilih sekarang!
+            </p>
+            <Link
+              href="/kajasep"
+              className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl hover:scale-105 transition-transform duration-300"
+            >
+              Pilih Kajasep
+            </Link>
+          </div>
+        )}
+
         {/* No Profile Data */}
         {!user.kajasep && !user.dejasep && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl text-center">
@@ -248,3 +391,4 @@ function InfoItem({
     </div>
   );
 }
+

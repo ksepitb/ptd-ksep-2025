@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
 
 export default function SignInPage() {
@@ -27,6 +26,7 @@ export default function SignInPage() {
         setError(result.error.message || "Sign in failed");
       } else {
         router.push("/dashboard");
+        router.refresh();
       }
     } catch {
       setError("An unexpected error occurred");
@@ -132,19 +132,6 @@ export default function SignInPage() {
               )}
             </button>
           </form>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-400">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/sign-up"
-                className="text-[#FFEED2] hover:text-[#A3863D] font-medium transition-colors duration-300"
-              >
-                Sign up
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>
