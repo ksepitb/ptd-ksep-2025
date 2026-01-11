@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User table - base authentication (all users)
+model user {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String    @default("user") // "kajasep" or "dejasep"
+
+  sessions Session[]
+  accounts Account[]
+  kajasep  Kajasep?
+  dejasep  Dejasep?
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// Kajasep-specific fields
+model Kajasep {
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  jurusan           String
+  idLine            String
+  instagram         String
+  mbti              String
+  hobby             String
+  tigaKata          String // 3kata field
+  preferensiDejasep String  @db.Text
+  photoUrl          String? // Cloudinary URL
+  amountDejasep     Int     @default(0)
+
+  @@map("kajasep")
+}
+
+// Dejasep-specific fields
+model Dejasep {
+  id          String @id @default(cuid())
+  userId      String @unique
+  user        user   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  nomorCaksep String
+  fakultas    String
+
+  @@map("dejasep")
+}

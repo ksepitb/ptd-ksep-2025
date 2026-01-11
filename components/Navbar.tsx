@@ -14,9 +14,7 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
-  { name: "???", href: "/" },
-  { name: "???", href: "/" },
-  { name: "???", href: "/" },
+  { name: "Kajasep", href: "/kajasep" },
 ];
 
 const MenuIcon = ({ className = "" }) => (
@@ -86,9 +84,8 @@ const Navbar = () => {
   return (
     <>
       <header
-        className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[700px] z-50 transition-transform duration-500 ease-in-out ${
-          isVisible ? "translate-y-0" : "-translate-y-24"
-        }`}
+        className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[700px] z-50 transition-transform duration-500 ease-in-out ${isVisible ? "translate-y-0" : "-translate-y-24"
+          }`}
       >
         <div
           className="relative w-full h-16 bg-gradient-to-br from-white/30 to-white/0 rounded-full shadow-lg backdrop-blur-xl border border-white/20 flex justify-between items-center px-4"
@@ -122,10 +119,10 @@ const Navbar = () => {
           })}
 
           <Link
-            href="/"
+            href="/sign-in"
             className="inset-shadow-sm inset-shadow-black hidden md:flex items-center bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] font-bold rounded-full transition-transform duration-300 hover:scale-105 py-2 px-8"
           >
-            ???
+            Sign in
           </Link>
 
           <div className="md:hidden">
@@ -138,26 +135,22 @@ const Navbar = () => {
 
       {/* --- Mobile Menu --- */}
       <div
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ease-in-out ${
-          isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ease-in-out ${isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-lg"></div>
 
         <div
-          className={`absolute top-4 right-4 z-10 transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
-          }`}
+          className={`absolute top-4 right-4 z-10 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
+            }`}
         >
           <button onClick={() => setMobileMenuOpen(false)} className="p-2">
-            <CloseIcon />
-          </button>
+            <CloseIcon /> </button>
         </div>
 
         <nav
-          className={`flex flex-col items-center justify-center h-full gap-8 transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
+          className={`flex flex-col items-center justify-center h-full gap-8 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
         >
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -183,7 +176,7 @@ const Navbar = () => {
           <Link
             href="/daftar"
             onClick={() => setMobileMenuOpen(false)}
-            className="inset-shadow-sm inset-shadow-indigo-500 mt-8 text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-3 px-12"
+            className="inset-shadow-sm inset-shadow-black mt-8 text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-3 px-12"
           >
             Daftar
           </Link>
