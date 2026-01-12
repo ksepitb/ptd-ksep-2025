@@ -152,30 +152,6 @@ export default function DashboardClient({ user }: { user: UserData }) {
           </span>
         </div>
 
-        {/* User Info Card */}
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl mb-8">
-          <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-[#A3863D]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-            Account Information
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoItem label="Name" value={user.name} />
-            <InfoItem label="Email" value={user.email} />
-          </div>
-        </div>
-
         {/* Kajasep Data */}
         {user.kajasep && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl mb-8">
