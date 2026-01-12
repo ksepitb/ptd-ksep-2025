@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
+import { useToast } from "@/components/Toast";
 
 export default function SignInPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,7 +26,9 @@ export default function SignInPage() {
 
       if (result.error) {
         setError(result.error.message || "Sign in failed");
+        showToast(result.error.message || "Sign in failed", "error");
       } else {
+        showToast("Login berhasil! Selamat datang kembali", "success");
         router.push("/dashboard");
         router.refresh();
       }

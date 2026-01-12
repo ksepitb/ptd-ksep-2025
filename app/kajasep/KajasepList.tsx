@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useToast } from "@/components/Toast";
 
 interface KajasepData {
   id: string;
@@ -33,6 +34,7 @@ export default function KajasepList({
 }: KajasepListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { showToast } = useToast();
   const [search, setSearch] = useState(initialSearch);
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -66,13 +68,14 @@ export default function KajasepList({
       });
 
       if (response.ok) {
+        showToast("Berhasil memilih Kajasep!", "success");
         router.refresh();
       } else {
         const data = await response.json();
-        alert(data.error || "Failed to choose Kajasep");
+        showToast(data.error || "Failed to choose Kajasep", "error");
       }
     } catch {
-      alert("An error occurred");
+      showToast("Terjadi kesalahan", "error");
     } finally {
       setLoading(null);
     }
@@ -88,13 +91,14 @@ export default function KajasepList({
       });
 
       if (response.ok) {
+        showToast("Pilihan Kajasep dibatalkan", "info");
         router.refresh();
       } else {
         const data = await response.json();
-        alert(data.error || "Failed to unchoose Kajasep");
+        showToast(data.error || "Failed to unchoose Kajasep", "error");
       }
     } catch {
-      alert("An error occurred");
+      showToast("Terjadi kesalahan", "error");
     } finally {
       setLoading(null);
     }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 interface DejasepData {
   id: string;
@@ -21,6 +22,7 @@ export default function DejasepListClient({
   maxChoosers,
 }: DejasepListClientProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleAction = async (dejasepId: string, action: "accept" | "reject") => {
@@ -33,13 +35,18 @@ export default function DejasepListClient({
       });
 
       if (response.ok) {
+        if (action === "accept") {
+          showToast("Dejasep berhasil diterima!", "success");
+        } else {
+          showToast("Dejasep ditolak. Mereka dapat memilih Kajasep lain.", "info");
+        }
         router.refresh();
       } else {
         const data = await response.json();
-        alert(data.error || `Failed to ${action} Dejasep`);
+        showToast(data.error || `Gagal ${action} Dejasep`, "error");
       }
     } catch {
-      alert("An error occurred");
+      showToast("Terjadi kesalahan", "error");
     } finally {
       setLoading(null);
     }
@@ -70,14 +77,14 @@ export default function DejasepListClient({
           </div>
           <div
             className={`w-16 h-16 rounded-2xl flex items-center justify-center ${dejaseps.length >= maxChoosers
-                ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D]"
-                : "bg-white/10"
+              ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D]"
+              : "bg-white/10"
               }`}
           >
             <svg
               className={`w-8 h-8 ${dejaseps.length >= maxChoosers
-                  ? "text-[#1a1a2e]"
-                  : "text-gray-400"
+                ? "text-[#1a1a2e]"
+                : "text-gray-400"
                 }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -125,8 +132,8 @@ export default function DejasepListClient({
             <div
               key={dejasep.id}
               className={`backdrop-blur-xl bg-white/5 border rounded-2xl p-6 transition-all duration-300 ${dejasep.status === "accepted"
-                  ? "border-green-500/30 bg-green-500/5"
-                  : "border-white/10 hover:border-white/20"
+                ? "border-green-500/30 bg-green-500/5"
+                : "border-white/10 hover:border-white/20"
                 }`}
             >
               <div className="flex gap-4 items-center">
@@ -148,8 +155,8 @@ export default function DejasepListClient({
                     {/* Status Badge */}
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${dejasep.status === "accepted"
-                          ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                          : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                        : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
                         }`}
                     >
                       {dejasep.status === "accepted" ? "Diterima" : "Menunggu"}
