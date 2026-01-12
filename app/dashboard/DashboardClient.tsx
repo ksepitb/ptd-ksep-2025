@@ -62,6 +62,9 @@ export default function DashboardClient({ user }: { user: UserData }) {
   const { showToast } = useToast();
   const [showEditModal, setShowEditModal] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(user.kajasep?.photoUrl || null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [formData, setFormData] = useState({
     name: user.kajasep?.name || "",
     jurusan: user.kajasep?.jurusan || "",
@@ -73,6 +76,18 @@ export default function DashboardClient({ user }: { user: UserData }) {
     preferensiDejasep: user.kajasep?.preferensiDejasep || "",
     description: user.kajasep?.description || "",
   });
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("Ukuran file maksimal 5MB", "error");
+        return;
+      }
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSignOut = async () => {
     showToast("Berhasil logout. Sampai jumpa!", "info");
@@ -86,15 +101,41 @@ export default function DashboardClient({ user }: { user: UserData }) {
     setEditLoading(true);
 
     try {
+      let photoUrl = user.kajasep?.photoUrl;
+
+      // Upload photo if a new one was selected
+      if (photoFile) {
+        setUploadingPhoto(true);
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", photoFile);
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          photoUrl = uploadData.url;
+        } else {
+          showToast("Gagal mengupload foto", "error");
+          setUploadingPhoto(false);
+          setEditLoading(false);
+          return;
+        }
+        setUploadingPhoto(false);
+      }
+
       const response = await fetch("/api/kajasep/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, photoUrl }),
       });
 
       if (response.ok) {
         showToast("Profil berhasil diperbarui!", "success");
         setShowEditModal(false);
+        setPhotoFile(null);
         router.refresh();
       } else {
         const data = await response.json();
@@ -434,6 +475,44 @@ export default function DashboardClient({ user }: { user: UserData }) {
             </div>
 
             <form onSubmit={handleEditSubmit} className="space-y-4">
+              {/* Photo Upload */}
+              <div className="flex flex-col items-center mb-4">
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white/10 border-2 border-[#A3863D]/30 mb-3">
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                      <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                  {uploadingPhoto && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <svg className="animate-spin h-6 w-6 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <label className="cursor-pointer px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-gray-300 text-sm hover:bg-white/10 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                  {photoFile ? "Ganti Foto" : "Upload Foto"}
+                </label>
+                <p className="text-xs text-gray-500 mt-1">Maksimal 5MB</p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField label="Nama" value={formData.name} onChange={(v) => setFormData({ ...formData, name: v })} />
                 <FormField label="Jurusan" value={formData.jurusan} onChange={(v) => setFormData({ ...formData, jurusan: v })} />

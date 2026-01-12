@@ -40,9 +40,10 @@ export async function PUT(request: NextRequest) {
       "tigaKata",
       "preferensiDejasep",
       "description",
+      "photoUrl",
     ];
 
-    const updateData: Record<string, string> = {};
+    const updateData: Record<string, string | null> = {};
     for (const field of allowedFields) {
       if (data[field] !== undefined) {
         updateData[field] = data[field];

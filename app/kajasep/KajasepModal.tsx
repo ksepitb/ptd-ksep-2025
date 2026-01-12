@@ -43,11 +43,11 @@ export default function KajasepModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl shadow-2xl"
+        className="w-full max-w-3xl max-h-[90vh] overflow-y-auto scrollbar-hide backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with close button */}
-        <div className="sticky top-0 bg-[#1a1a2e]/95 backdrop-blur-xl p-6 border-b border-white/10 flex items-center justify-between">
+        <div className="sticky top-0 bg-[#1a1a2e]/95 backdrop-blur-xl p-6 border-b border-white/10 flex items-center justify-between z-10">
           <h2 className="text-xl font-bold text-white">Detail Kajasep</h2>
           <button
             onClick={onClose}
@@ -60,22 +60,23 @@ export default function KajasepModal({
         </div>
 
         <div className="p-6">
-          {/* Photo and Basic Info */}
-          <div className="flex gap-6 mb-6">
-            <div className="flex-shrink-0">
-              <div className="w-32 h-32 rounded-2xl overflow-hidden bg-white/10 border-2 border-[#A3863D]/30">
+          {/* Photo and Info Section - Side by Side */}
+          <div className="flex flex-col md:flex-row gap-6 mb-6">
+            {/* Large Photo - 3:4 portrait aspect ratio */}
+            <div className="flex-shrink-0 w-full md:w-48">
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-white/10 border-2 border-[#A3863D]/30">
                 {kajasep.photoUrl ? (
                   <Image
                     src={kajasep.photoUrl}
                     alt={kajasep.name}
-                    width={128}
-                    height={128}
+                    width={320}
+                    height={240}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-500">
                     <svg
-                      className="w-12 h-12"
+                      className="w-16 h-16"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -92,28 +93,32 @@ export default function KajasepModal({
               </div>
             </div>
 
-            <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white mb-1">{kajasep.name}</h3>
-              <p className="text-gray-400 mb-3">{kajasep.jurusan}</p>
+            {/* Info beside photo */}
+            <div className="flex-1 flex flex-col">
+              {/* Name & Jurusan */}
+              <div className="mb-4">
+                <h3 className="text-2xl font-bold text-white mb-1">{kajasep.name}</h3>
+                <p className="text-gray-400 mb-3">{kajasep.jurusan}</p>
 
-              {/* Status Badge */}
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isFull
-                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                  : "bg-green-500/20 text-green-400 border border-green-500/30"
-                  }`}
-              >
-                {kajasep.currentChoosers}/{maxChoosers} Dejasep
-              </span>
+                {/* Status Badge */}
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isFull
+                    ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                    : "bg-green-500/20 text-green-400 border border-green-500/30"
+                    }`}
+                >
+                  {kajasep.currentChoosers}/{maxChoosers} Dejasep
+                </span>
+              </div>
+
+              {/* Info Grid - MBTI, Hobby, ID Line, Instagram */}
+              <div className="grid grid-cols-2 gap-3 flex-1">
+                <InfoBox label="MBTI" value={kajasep.mbti} />
+                <InfoBox label="Hobby" value={kajasep.hobby} />
+                <InfoBox label="ID Line" value={kajasep.idLine || "-"} />
+                <InfoBox label="Instagram" value={kajasep.instagram || "-"} />
+              </div>
             </div>
-          </div>
-
-          {/* Info Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <InfoBox label="MBTI" value={kajasep.mbti} />
-            <InfoBox label="Hobby" value={kajasep.hobby} />
-            {kajasep.idLine && <InfoBox label="ID Line" value={kajasep.idLine} />}
-            {kajasep.instagram && <InfoBox label="Instagram" value={kajasep.instagram} />}
           </div>
 
           {/* 3 Kata */}
@@ -179,7 +184,7 @@ function InfoBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-white/5 rounded-xl px-4 py-3 border border-white/10">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className="text-white font-medium">{value}</p>
+      <p className="text-white font-medium text-sm">{value}</p>
     </div>
   );
 }
