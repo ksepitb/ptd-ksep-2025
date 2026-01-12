@@ -99,6 +99,7 @@ model Dejasep {
   fakultas         String
   chosenKajasepId  String?  // The Kajasep they chose (can only choose 1)
   chosenKajasep    Kajasep? @relation(fields: [chosenKajasepId], references: [id])
+  status           String   @default("pending") // "pending", "accepted", "rejected"
 
   @@map("dejasep")
 }

@@ -68,7 +68,10 @@ export async function POST(request: NextRequest) {
     // Update dejasep with chosen kajasep
     await prisma.dejasep.update({
       where: { id: user.dejasep.id },
-      data: { chosenKajasepId: kajasepId },
+      data: {
+        chosenKajasepId: kajasepId,
+        status: "pending" // Reset status when choosing a new kajasep
+      },
     });
 
     return NextResponse.json({ success: true });

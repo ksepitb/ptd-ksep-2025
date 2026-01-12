@@ -41,6 +41,7 @@ interface DejasepData {
   fakultas: string;
   chosenKajasepId: string | null;
   chosenKajasep: ChosenKajasep | null;
+  status: string;
 }
 
 interface UserData {
@@ -97,10 +98,10 @@ export default function DashboardClient({ user }: { user: UserData }) {
         <div className="mb-8">
           <span
             className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${accountType === "Kajasep"
-                ? "bg-gradient-to-r from-[#FFEED2]/20 to-[#A3863D]/20 text-[#FFEED2] border border-[#A3863D]/30"
-                : accountType === "Dejasep"
-                  ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-500/30"
-                  : "bg-white/10 text-gray-400 border border-white/20"
+              ? "bg-gradient-to-r from-[#FFEED2]/20 to-[#A3863D]/20 text-[#FFEED2] border border-[#A3863D]/30"
+              : accountType === "Dejasep"
+                ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-500/30"
+                : "bg-white/10 text-gray-400 border border-white/20"
               }`}
           >
             {accountType} Account
@@ -229,22 +230,32 @@ export default function DashboardClient({ user }: { user: UserData }) {
         {/* Chosen Kajasep for Dejasep */}
         {user.dejasep?.chosenKajasep && (
           <div className="backdrop-blur-xl bg-gradient-to-r from-[#FFEED2]/5 to-[#A3863D]/5 border border-[#A3863D]/30 rounded-3xl p-8 shadow-2xl mb-8">
-            <h2 className="text-xl font-semibold text-[#FFEED2] mb-6 flex items-center gap-2">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-[#FFEED2] flex items-center gap-2">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                Kajasep Pilihanmu
+              </h2>
+              <span
+                className={`px-3 py-1 text-sm font-medium rounded-full ${user.dejasep.status === "accepted"
+                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                  }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-              </svg>
-              Kajasep Pilihanmu
-            </h2>
+                {user.dejasep.status === "accepted" ? "✓ Diterima" : "⏳ Menunggu Konfirmasi"}
+              </span>
+            </div>
 
             <div className="flex gap-6">
               {/* Photo */}
