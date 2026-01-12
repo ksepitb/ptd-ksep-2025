@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import DejasepListClient from "./DejasepListClient";
 
+export const metadata = {
+  title: "Dejasep Saya",
+};
+
 export default async function DejasepPage() {
   const session = await auth.api.getSession({
     headers: await headers(),

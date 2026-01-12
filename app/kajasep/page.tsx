@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import KajasepList from "./KajasepList";
 
+export const metadata = {
+  title: "Pilih Kajasep",
+};
+
 interface PageProps {
   searchParams: Promise<{ search?: string; page?: string }>;
 }
