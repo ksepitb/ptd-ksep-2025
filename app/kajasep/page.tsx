@@ -105,8 +105,12 @@ export default async function KajasepPage({ searchParams }: PageProps) {
             hobby: k.hobby,
             tigaKata: k.tigaKata,
             photoUrl: k.photoUrl,
+            description: k.description,
             amountDejasep: k.amountDejasep,
             currentChoosers: k._count.chosenBy,
+            idLine: k.idLine,
+            instagram: k.instagram,
+            preferensiDejasep: k.preferensiDejasep,
           }))}
           totalPages={totalPages}
           currentPage={page}

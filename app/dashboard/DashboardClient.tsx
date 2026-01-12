@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useToast } from "@/components/Toast";
 
 interface KajasepData {
   id: string;
@@ -16,6 +18,7 @@ interface KajasepData {
   tigaKata: string;
   preferensiDejasep: string;
   photoUrl: string | null;
+  description: string | null;
   amountDejasep: number;
   _count?: {
     chosenBy: number;
@@ -56,11 +59,51 @@ interface UserData {
 
 export default function DashboardClient({ user }: { user: UserData }) {
   const router = useRouter();
+  const { showToast } = useToast();
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user.kajasep?.name || "",
+    jurusan: user.kajasep?.jurusan || "",
+    idLine: user.kajasep?.idLine || "",
+    instagram: user.kajasep?.instagram || "",
+    mbti: user.kajasep?.mbti || "",
+    hobby: user.kajasep?.hobby || "",
+    tigaKata: user.kajasep?.tigaKata || "",
+    preferensiDejasep: user.kajasep?.preferensiDejasep || "",
+    description: user.kajasep?.description || "",
+  });
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
     router.refresh();
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEditLoading(true);
+
+    try {
+      const response = await fetch("/api/kajasep/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        showToast("Profil berhasil diperbarui!", "success");
+        setShowEditModal(false);
+        router.refresh();
+      } else {
+        const data = await response.json();
+        showToast(data.error || "Gagal memperbarui profil", "error");
+      }
+    } catch {
+      showToast("Terjadi kesalahan", "error");
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   const accountType = user.kajasep
@@ -135,22 +178,33 @@ export default function DashboardClient({ user }: { user: UserData }) {
         {/* Kajasep Data */}
         {user.kajasep && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl mb-8">
-            <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-              <svg
-                className="w-5 h-5 text-[#A3863D]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-[#A3863D]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                  />
+                </svg>
+                Kajasep Profile
+              </h2>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="px-4 py-2 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-medium rounded-xl hover:scale-105 transition-transform duration-300 flex items-center gap-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                />
-              </svg>
-              Kajasep Profile
-            </h2>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Profile
+              </button>
+            </div>
 
             {/* Chooser Count */}
             {user.kajasep._count && (
@@ -190,10 +244,15 @@ export default function DashboardClient({ user }: { user: UserData }) {
               />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-4">
               <InfoItem
                 label="Preferensi Dejasep"
                 value={user.kajasep.preferensiDejasep}
+                fullWidth
+              />
+              <InfoItem
+                label="Deskripsi"
+                value={user.kajasep.description || "Belum ada deskripsi"}
                 fullWidth
               />
             </div>
@@ -380,6 +439,68 @@ export default function DashboardClient({ user }: { user: UserData }) {
           </div>
         )}
       </div>
+
+      {/* Edit Profile Modal */}
+      {showEditModal && user.kajasep && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+              >
+                <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField label="Nama" value={formData.name} onChange={(v) => setFormData({ ...formData, name: v })} />
+                <FormField label="Jurusan" value={formData.jurusan} onChange={(v) => setFormData({ ...formData, jurusan: v })} />
+                <FormField label="ID Line" value={formData.idLine} onChange={(v) => setFormData({ ...formData, idLine: v })} />
+                <FormField label="Instagram" value={formData.instagram} onChange={(v) => setFormData({ ...formData, instagram: v })} />
+                <FormField label="MBTI" value={formData.mbti} onChange={(v) => setFormData({ ...formData, mbti: v })} />
+                <FormField label="Hobby" value={formData.hobby} onChange={(v) => setFormData({ ...formData, hobby: v })} />
+              </div>
+
+              <FormField label="3 Kata" value={formData.tigaKata} onChange={(v) => setFormData({ ...formData, tigaKata: v })} />
+
+              <FormTextArea
+                label="Preferensi Dejasep"
+                value={formData.preferensiDejasep}
+                onChange={(v) => setFormData({ ...formData, preferensiDejasep: v })}
+              />
+
+              <FormTextArea
+                label="Deskripsi"
+                value={formData.description}
+                onChange={(v) => setFormData({ ...formData, description: v })}
+                placeholder="Ceritakan tentang dirimu..."
+              />
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-gray-300 font-medium rounded-xl hover:bg-white/10 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-50"
+                >
+                  {editLoading ? "Menyimpan..." : "Simpan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -403,3 +524,49 @@ function InfoItem({
   );
 }
 
+function FormField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <label className="block text-sm text-gray-400 mb-1">{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#A3863D]/50 transition-all"
+      />
+    </div>
+  );
+}
+
+function FormTextArea({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="block text-sm text-gray-400 mb-1">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#A3863D]/50 transition-all resize-none"
+      />
+    </div>
+  );
+}

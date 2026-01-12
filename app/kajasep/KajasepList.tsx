@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useToast } from "@/components/Toast";
+import KajasepModal from "./KajasepModal";
 
 interface KajasepData {
   id: string;
@@ -13,8 +14,12 @@ interface KajasepData {
   hobby: string;
   tigaKata: string;
   photoUrl: string | null;
+  description: string | null;
   amountDejasep: number;
   currentChoosers: number;
+  idLine?: string;
+  instagram?: string;
+  preferensiDejasep?: string;
 }
 
 interface KajasepListProps {
@@ -37,6 +42,7 @@ export default function KajasepList({
   const { showToast } = useToast();
   const [search, setSearch] = useState(initialSearch);
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedKajasep, setSelectedKajasep] = useState<KajasepData | null>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +75,7 @@ export default function KajasepList({
 
       if (response.ok) {
         showToast("Berhasil memilih Kajasep!", "success");
+        setSelectedKajasep(null);
         router.refresh();
       } else {
         const data = await response.json();
@@ -170,10 +177,15 @@ export default function KajasepList({
         </div>
       )}
 
-      {/* Kajasep List */}
-      <div className="space-y-4">
+      {/* Hint */}
+      <p className="text-gray-400 text-sm mb-4 text-center">
+        Klik pada kartu Kajasep untuk melihat detail dan memilih
+      </p>
+
+      {/* Kajasep Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {initialKajaseps.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="col-span-full text-center py-12">
             <p className="text-gray-400">Tidak ada Kajasep ditemukan</p>
           </div>
         ) : (
@@ -181,32 +193,32 @@ export default function KajasepList({
             const maxChoosers = kajasep.amountDejasep + 1;
             const isFull = kajasep.currentChoosers >= maxChoosers;
             const isChosen = currentDejasep?.chosenKajasepId === kajasep.id;
-            const canChoose = !currentDejasep.chosenKajasepId && !isFull;
 
             return (
               <div
                 key={kajasep.id}
-                className={`backdrop-blur-xl bg-white/5 border rounded-2xl p-6 transition-all duration-300 ${isChosen
-                  ? "border-[#A3863D]/50 bg-[#A3863D]/10"
-                  : "border-white/10 hover:border-white/20"
+                onClick={() => setSelectedKajasep(kajasep)}
+                className={`cursor-pointer backdrop-blur-xl bg-white/5 border rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] ${isChosen
+                    ? "border-[#A3863D]/50 bg-[#A3863D]/10"
+                    : "border-white/10 hover:border-white/20"
                   }`}
               >
                 <div className="flex gap-4">
                   {/* Photo */}
                   <div className="flex-shrink-0">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/10 border border-white/10">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/10 border border-white/10">
                       {kajasep.photoUrl ? (
                         <Image
                           src={kajasep.photoUrl}
                           alt={kajasep.name}
-                          width={80}
-                          height={80}
+                          width={64}
+                          height={64}
                           className="w-full h-full object-cover"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-500">
                           <svg
-                            className="w-8 h-8"
+                            className="w-6 h-6"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -225,69 +237,38 @@ export default function KajasepList({
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-1">
+                        <h3 className="text-lg font-bold text-white mb-0.5 truncate">
                           {kajasep.name}
                         </h3>
-                        <p className="text-gray-400 text-sm">{kajasep.jurusan}</p>
+                        <p className="text-gray-400 text-sm truncate">{kajasep.jurusan}</p>
                       </div>
 
                       {/* Status Badge */}
-                      <div className="flex-shrink-0">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${isFull
-                            ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                            : "bg-green-500/20 text-green-400 border border-green-500/30"
-                            }`}
-                        >
-                          {kajasep.currentChoosers}/{maxChoosers}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Details */}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="inline-flex items-center px-2 py-1 bg-white/5 rounded-lg text-xs text-gray-300">
-                        MBTI: {kajasep.mbti}
-                      </span>
-                      <span className="inline-flex items-center px-2 py-1 bg-white/5 rounded-lg text-xs text-gray-300">
-                        Hobby: {kajasep.hobby}
+                      <span
+                        className={`flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${isChosen
+                            ? "bg-[#A3863D]/30 text-[#FFEED2] border border-[#A3863D]/50"
+                            : isFull
+                              ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                              : "bg-green-500/20 text-green-400 border border-green-500/30"
+                          }`}
+                      >
+                        {isChosen ? "✓ Dipilih" : `${kajasep.currentChoosers}/${maxChoosers}`}
                       </span>
                     </div>
 
-                    <p className="mt-2 text-sm text-gray-400 italic">
-                      &quot;{kajasep.tigaKata}&quot;
-                    </p>
+                    {/* Quick Info */}
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      <span className="inline-flex items-center px-2 py-0.5 bg-white/5 rounded text-xs text-gray-400">
+                        {kajasep.mbti}
+                      </span>
+                      <span className="inline-flex items-center px-2 py-0.5 bg-white/5 rounded text-xs text-gray-400">
+                        {kajasep.hobby}
+                      </span>
+                    </div>
                   </div>
                 </div>
-
-                {/* Action Button */}
-                {currentDejasep && (
-                  <div className="mt-4 flex justify-end">
-                    {isChosen ? (
-                      <span className="px-4 py-2 bg-gradient-to-r from-[#FFEED2]/20 to-[#A3863D]/20 text-[#FFEED2] rounded-xl font-medium">
-                        ✓ Dipilih
-                      </span>
-                    ) : canChoose ? (
-                      <button
-                        onClick={() => handleChoose(kajasep.id)}
-                        disabled={loading === kajasep.id}
-                        className="px-6 py-2 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl hover:scale-105 transition-transform duration-300 disabled:opacity-50"
-                      >
-                        {loading === kajasep.id ? "..." : "Pilih"}
-                      </button>
-                    ) : isFull ? (
-                      <span className="px-4 py-2 bg-red-500/10 text-red-400 rounded-xl font-medium">
-                        Penuh
-                      </span>
-                    ) : currentDejasep.chosenKajasepId ? (
-                      <span className="px-4 py-2 bg-white/5 text-gray-500 rounded-xl font-medium">
-                        Sudah memilih lain
-                      </span>
-                    ) : null}
-                  </div>
-                )}
               </div>
             );
           })
@@ -311,8 +292,8 @@ export default function KajasepList({
                 key={page}
                 onClick={() => handlePageChange(page)}
                 className={`w-10 h-10 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                  ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e]"
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                    ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e]"
+                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
                   }`}
               >
                 {page}
@@ -328,6 +309,19 @@ export default function KajasepList({
             →
           </button>
         </div>
+      )}
+
+      {/* Modal */}
+      {selectedKajasep && (
+        <KajasepModal
+          kajasep={selectedKajasep}
+          onClose={() => setSelectedKajasep(null)}
+          onChoose={handleChoose}
+          isChosen={currentDejasep?.chosenKajasepId === selectedKajasep.id}
+          canChoose={!currentDejasep.chosenKajasepId && selectedKajasep.currentChoosers < selectedKajasep.amountDejasep + 1}
+          loading={loading === selectedKajasep.id}
+          hasChosenOther={!!currentDejasep.chosenKajasepId && currentDejasep.chosenKajasepId !== selectedKajasep.id}
+        />
       )}
     </>
   );

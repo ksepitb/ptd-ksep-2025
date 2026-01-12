@@ -83,6 +83,7 @@ model Kajasep {
   tigaKata          String // 3kata field
   preferensiDejasep String    @db.Text
   photoUrl          String? // Cloudinary URL
+  description       String?   @db.Text // Detailed description/bio
   amountDejasep     Int       @default(1) // 1 or 2, max choosers = amountDejasep + 1
   chosenBy          Dejasep[] // Dejasep users who chose this Kajasep
 
