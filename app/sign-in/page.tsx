@@ -40,7 +40,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0f23] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-[#44340C] to-[#271E08] px-4">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-[#FFEED2]/10 to-[#A3863D]/10 rounded-full blur-3xl animate-pulse" />
@@ -53,7 +53,7 @@ export default function SignInPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-transparent bg-clip-text mb-2">
-              Welcome Back
+              Welcome Back!
             </h1>
             <p className="text-gray-400">Sign in to your account</p>
           </div>

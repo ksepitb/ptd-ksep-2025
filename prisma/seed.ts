@@ -1,11 +1,22 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import * as fs from "fs";
+import * as path from "path";
 
 const connectionString = process.env.DATABASE_URL!;
 const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString }) });
 
 const BASE_URL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
+
+// Generate email from name: "Nicholas Wise Saragih" -> "nicholaswise@ksepitb.com"
+function generateEmail(name: string): string {
+  const parts = name.trim().toLowerCase().split(/\s+/);
+  const firstTwo = parts.slice(0, 2).join("");
+  // Remove any special characters
+  const clean = firstTwo.replace(/[^a-z0-9]/g, "");
+  return `${clean}@ksepitb.com`;
+}
 
 async function signUpUser(email: string, password: string, name: string) {
   const response = await fetch(`${BASE_URL}/api/auth/sign-up/email`, {
@@ -25,129 +36,118 @@ async function signUpUser(email: string, password: string, name: string) {
   return response.json();
 }
 
+// Parse CSV - handles quoted fields with commas and newlines
+function parseCSV(content: string): string[][] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentField = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
+    const nextChar = content[i + 1];
+
+    if (char === '"') {
+      if (insideQuotes && nextChar === '"') {
+        // Escaped quote
+        currentField += '"';
+        i++;
+      } else {
+        // Toggle quote mode
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === "," && !insideQuotes) {
+      currentRow.push(currentField);
+      currentField = "";
+    } else if ((char === "\r" || char === "\n") && !insideQuotes) {
+      if (char === "\r" && nextChar === "\n") {
+        i++; // Skip \n after \r
+      }
+      if (currentField || currentRow.length > 0) {
+        currentRow.push(currentField);
+        rows.push(currentRow);
+        currentRow = [];
+        currentField = "";
+      }
+    } else {
+      currentField += char;
+    }
+  }
+
+  // Don't forget the last field/row
+  if (currentField || currentRow.length > 0) {
+    currentRow.push(currentField);
+    rows.push(currentRow);
+  }
+
+  return rows;
+}
+
 async function main() {
-  console.log("🌱 Starting seed...");
+  console.log("🌱 Starting seed from CSV...");
   console.log(`📡 Using API at: ${BASE_URL}`);
 
-  // Kajasep data
-  const kajasepData = [
-    {
-      email: "kajasep1@example.com",
-      name: "Ahmad Fauzi",
-      kajasep: {
-        name: "Ahmad Fauzi",
-        jurusan: "Teknik Informatika",
-        idLine: "ahmadfauzi",
-        instagram: "@ahmadfauzi",
-        mbti: "INTJ",
-        hobby: "Coding, Gaming",
-        tigaKata: "Ambisius, Kreatif, Loyal",
-        preferensiDejasep: "Saya mencari Dejasep yang aktif dan suka berdiskusi.",
-        amountDejasep: 1,
-      },
-    },
-    {
-      email: "kajasep2@example.com",
-      name: "Budi Santoso",
-      kajasep: {
-        name: "Budi Santoso",
-        jurusan: "Teknik Elektro",
-        idLine: "budisantoso",
-        instagram: "@budisantoso",
-        mbti: "ENFP",
-        hobby: "Musik, Olahraga",
-        tigaKata: "Energik, Ramah, Optimis",
-        preferensiDejasep: "Mencari Dejasep yang supel dan suka ngobrol.",
-        amountDejasep: 2,
-      },
-    },
-    {
-      email: "kajasep3@example.com",
-      name: "Citra Dewi",
-      kajasep: {
-        name: "Citra Dewi",
-        jurusan: "Teknik Kimia",
-        idLine: "citradewi",
-        instagram: "@citradewi",
-        mbti: "ISFJ",
-        hobby: "Membaca, Memasak",
-        tigaKata: "Sabar, Perhatian, Teliti",
-        preferensiDejasep: "Saya suka Dejasep yang kalem dan bisa diajak diskusi.",
-        amountDejasep: 1,
-      },
-    },
-    {
-      email: "kajasep4@example.com",
-      name: "Dimas Pratama",
-      kajasep: {
-        name: "Dimas Pratama",
-        jurusan: "Teknik Mesin",
-        idLine: "dimaspratama",
-        instagram: "@dimaspratama",
-        mbti: "ESTP",
-        hobby: "Futsal, Traveling",
-        tigaKata: "Spontan, Berani, Seru",
-        preferensiDejasep: "Yang penting asik diajak main!",
-        amountDejasep: 2,
-      },
-    },
-    {
-      email: "kajasep5@example.com",
-      name: "Eka Putri",
-      kajasep: {
-        name: "Eka Putri",
-        jurusan: "Teknik Lingkungan",
-        idLine: "ekaputri",
-        instagram: "@ekaputri",
-        mbti: "INFP",
-        hobby: "Menulis, Fotografi",
-        tigaKata: "Kreatif, Sensitif, Idealis",
-        preferensiDejasep: "Mencari Dejasep yang punya mimpi besar.",
-        amountDejasep: 1,
-      },
-    },
-  ];
+  // Read and parse CSV
+  const csvPath = path.join(__dirname, "..", "kajasep.csv");
+  const csvContent = fs.readFileSync(csvPath, "utf-8");
+  const rows = parseCSV(csvContent);
 
-  // Dejasep data
-  const dejasepData = [
-    {
-      email: "dejasep1@example.com",
-      name: "Farhan Hakim",
-      dejasep: {
-        name: "Farhan Hakim",
-        nomorCaksep: "CS-001",
-        fakultas: "FMIPA",
-      },
-    },
-    {
-      email: "dejasep2@example.com",
-      name: "Gita Lestari",
-      dejasep: {
-        name: "Gita Lestari",
-        nomorCaksep: "CS-002",
-        fakultas: "FTI",
-      },
-    },
-  ];
+  // Skip header row (first row)
+  const dataRows = rows.slice(1);
 
-  console.log("\n📝 Creating Kajasep users via API...");
-  for (const data of kajasepData) {
+  console.log(`📊 Found ${dataRows.length} rows in CSV\n`);
+
+  let created = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  for (const row of dataRows) {
+    // Skip empty rows
+    if (!row[1] || row[1].trim() === "") continue;
+
+    const name = row[1].trim();
+    const jurusan = row[2]?.trim() || "";
+    const idLine = row[3]?.trim() || "";
+    const instagram = row[5]?.trim() || "";
+    const mbti = row[6]?.trim() || "";
+    const hobby = row[7]?.trim() || "";
+    const tigaKata = row[8]?.trim() || "";
+    const preferensiDejasep = row[9]?.trim() || "";
+    const photoUrl = null; // Google Drive URL (maybe change later)
+    const amountDejasepRaw = row[11]?.trim() || "1";
+
+    // Parse amountDejasep (1 or 2)
+    const amountDejasep = amountDejasepRaw === "2" ? 2 : 1;
+
+    const email = generateEmail(name);
+
     try {
       // Check if user exists
-      const existing = await prisma.user.findUnique({ where: { email: data.email } });
+      const existing = await prisma.user.findUnique({ where: { email } });
       if (existing) {
-        console.log(`  ⏭️  ${data.email} already exists`);
+        console.log(`  ⏭️  ${email} (${name}) already exists`);
+        skipped++;
         continue;
       }
 
       // Create user via BetterAuth API
-      const result = await signUpUser(data.email, "password123", data.name);
+      const result = await signUpUser(email, "equinoxera", name);
 
       // Add kajasep profile
       await prisma.kajasep.create({
         data: {
           userId: result.user.id,
-          ...data.kajasep,
+          name,
+          jurusan,
+          idLine,
+          instagram,
+          mbti,
+          hobby,
+          tigaKata,
+          preferensiDejasep,
+          photoUrl: null, // Set to null for now, can upload photos later
+          amountDejasep,
+          description: "", // Empty for now
         },
       });
 
@@ -157,30 +157,62 @@ async function main() {
         data: { role: "kajasep" },
       });
 
-      console.log(`  ✅ Created ${data.name}`);
+      console.log(`  ✅ Created ${name} (${email})`);
+      created++;
     } catch (error) {
-      console.log(`  ❌ Failed ${data.email}: ${error}`);
+      console.log(`  ❌ Failed ${email}: ${error}`);
+      errors++;
     }
   }
 
-  console.log("\n📝 Creating Dejasep users via API...");
-  for (const data of dejasepData) {
+  console.log(`\n   Kajasep: ✅ ${created} | ⏭️ ${skipped} | ❌ ${errors}`);
+
+  // ========== DEJASEP SEEDING ==========
+  console.log("\n📝 Creating Dejasep users from dejasep.csv...");
+
+  const dejasepCsvPath = path.join(__dirname, "..", "dejasep.csv");
+  const dejasepCsvContent = fs.readFileSync(dejasepCsvPath, "utf-8");
+  const dejasepRows = parseCSV(dejasepCsvContent);
+
+  // Skip first 2 rows (empty + header)
+  const dejasepDataRows = dejasepRows.slice(2);
+
+  let dejasepCreated = 0;
+  let dejasepSkipped = 0;
+  let dejasepErrors = 0;
+
+  for (const row of dejasepDataRows) {
+    // Skip empty rows
+    const nomorCaksep = row[1]?.trim();
+    if (!nomorCaksep || nomorCaksep === "") continue;
+
+    const name = row[2]?.trim() || "";
+    const fakultas = row[3]?.trim() || "";
+
+    if (!name) continue;
+
+    // Email format: caksep-<nomor>@ksepitb.com
+    const email = `caksep-${nomorCaksep}@ksepitb.com`;
+
     try {
       // Check if user exists
-      const existing = await prisma.user.findUnique({ where: { email: data.email } });
+      const existing = await prisma.user.findUnique({ where: { email } });
       if (existing) {
-        console.log(`  ⏭️  ${data.email} already exists`);
+        console.log(`  ⏭️  ${email} (${name}) already exists`);
+        dejasepSkipped++;
         continue;
       }
 
       // Create user via BetterAuth API
-      const result = await signUpUser(data.email, "password123", data.name);
+      const result = await signUpUser(email, "vanguard", name);
 
       // Add dejasep profile
       await prisma.dejasep.create({
         data: {
           userId: result.user.id,
-          ...data.dejasep,
+          name,
+          nomorCaksep,
+          fakultas,
         },
       });
 
@@ -190,17 +222,21 @@ async function main() {
         data: { role: "dejasep" },
       });
 
-      console.log(`  ✅ Created ${data.name}`);
+      console.log(`  ✅ Created ${name} (${email})`);
+      dejasepCreated++;
     } catch (error) {
-      console.log(`  ❌ Failed ${data.email}: ${error}`);
+      console.log(`  ❌ Failed ${email}: ${error}`);
+      dejasepErrors++;
     }
   }
 
+  console.log(`\n   Dejasep: ✅ ${dejasepCreated} | ⏭️ ${dejasepSkipped} | ❌ ${dejasepErrors}`);
+
   console.log("\n🎉 Seed completed!");
   console.log("\n📝 Login credentials:");
-  console.log("   Kajasep: kajasep1@example.com - kajasep5@example.com");
-  console.log("   Dejasep: dejasep1@example.com - dejasep2@example.com");
-  console.log("   Password for all: password123");
+  console.log("   Kajasep: firstnamesecondname@ksepitb.com (password: equinoxera)");
+  console.log("   Dejasep: caksep-<nomor>@ksepitb.com (password: vanguard)");
+  console.log("   Example: nicholaswise@ksepitb.com | caksep-4@ksepitb.com");
 }
 
 main()
@@ -211,3 +247,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

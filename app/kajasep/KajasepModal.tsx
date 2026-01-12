@@ -132,7 +132,7 @@ export default function KajasepModal({
           {/* Description */}
           <div className="mb-6">
             <p className="text-sm text-gray-400 mb-2">Deskripsi</p>
-            <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+            <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10 whitespace-pre-wrap">
               {kajasep.description || "Belum ada deskripsi"}
             </p>
           </div>
@@ -141,7 +141,7 @@ export default function KajasepModal({
           {kajasep.preferensiDejasep && (
             <div className="mb-6">
               <p className="text-sm text-gray-400 mb-2">Preferensi Dejasep</p>
-              <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+              <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10 whitespace-pre-wrap">
                 {kajasep.preferensiDejasep}
               </p>
             </div>

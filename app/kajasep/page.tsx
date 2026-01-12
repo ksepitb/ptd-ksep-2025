@@ -95,9 +95,6 @@ export default async function KajasepPage({ searchParams }: PageProps) {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-transparent bg-clip-text mb-2">
             Kajasep
           </h1>
-          <p className="text-gray-400">
-            Pilih satu Kajasep favoritmu
-          </p>
         </div>
 
         <KajasepList

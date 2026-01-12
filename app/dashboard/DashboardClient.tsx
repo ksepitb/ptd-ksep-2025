@@ -573,7 +573,7 @@ function InfoItem({
   return (
     <div className={fullWidth ? "col-span-full" : ""}>
       <p className="text-sm text-gray-400 mb-1">{label}</p>
-      <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+      <p className="text-white bg-white/5 rounded-xl px-4 py-3 border border-white/10 whitespace-pre-wrap">
         {value || "-"}
       </p>
     </div>
