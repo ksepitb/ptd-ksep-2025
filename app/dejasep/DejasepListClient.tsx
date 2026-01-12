@@ -179,14 +179,14 @@ export default function DejasepListClient({
                       <button
                         onClick={() => handleAction(dejasep.id, "accept")}
                         disabled={loading === `accept-${dejasep.id}`}
-                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-xl hover:scale-105 transition-transform duration-300 disabled:opacity-50"
+                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-xl btn-interactive hover:scale-105 transition-all duration-300 disabled:opacity-50"
                       >
                         {loading === `accept-${dejasep.id}` ? "..." : "Terima"}
                       </button>
                       <button
                         onClick={() => handleAction(dejasep.id, "reject")}
                         disabled={loading === `reject-${dejasep.id}`}
-                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 font-medium rounded-xl hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 font-medium rounded-xl btn-interactive hover:bg-red-500/30 transition-all disabled:opacity-50"
                       >
                         {loading === `reject-${dejasep.id}` ? "..." : "Tolak"}
                       </button>

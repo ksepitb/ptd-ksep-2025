@@ -15,6 +15,27 @@
   animation: slide-in 0.3s ease-out;
 }
 
+/* Hide scrollbar but keep scrollable */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Enhanced button interactions */
+.btn-interactive {
+  transition: all 0.2s ease;
+}
+.btn-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.btn-interactive:active {
+  transform: translateY(0) scale(0.98);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

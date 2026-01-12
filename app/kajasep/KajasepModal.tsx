@@ -41,9 +41,9 @@ export default function KajasepModal({
   const isFull = kajasep.currentChoosers >= maxChoosers;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl shadow-2xl"
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with close button */}
@@ -99,8 +99,8 @@ export default function KajasepModal({
               {/* Status Badge */}
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isFull
-                    ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                    : "bg-green-500/20 text-green-400 border border-green-500/30"
+                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                  : "bg-green-500/20 text-green-400 border border-green-500/30"
                   }`}
               >
                 {kajasep.currentChoosers}/{maxChoosers} Dejasep
@@ -155,7 +155,7 @@ export default function KajasepModal({
               <button
                 onClick={() => onChoose(kajasep.id)}
                 disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl hover:scale-[1.02] transition-transform duration-300 disabled:opacity-50"
+                className="w-full py-3 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl btn-interactive hover:scale-[1.02] transition-all duration-300 disabled:opacity-50"
               >
                 {loading ? "Memproses..." : "Pilih Kajasep Ini"}
               </button>

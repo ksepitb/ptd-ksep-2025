@@ -75,6 +75,7 @@ export default function DashboardClient({ user }: { user: UserData }) {
   });
 
   const handleSignOut = async () => {
+    showToast("Berhasil logout. Sampai jumpa!", "info");
     await signOut();
     router.push("/");
     router.refresh();
@@ -147,7 +148,7 @@ export default function DashboardClient({ user }: { user: UserData }) {
                 : "bg-white/10 text-gray-400 border border-white/20"
               }`}
           >
-            {accountType} Account
+            {accountType == "Dejasep" ? "Ca-KSEP" : accountType}
           </span>
         </div>
 
@@ -442,8 +443,8 @@ export default function DashboardClient({ user }: { user: UserData }) {
 
       {/* Edit Profile Modal */}
       {showEditModal && user.kajasep && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowEditModal(false)}>
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/10 rounded-3xl p-8 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
               <button
@@ -485,14 +486,14 @@ export default function DashboardClient({ user }: { user: UserData }) {
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-gray-300 font-medium rounded-xl hover:bg-white/10 transition-colors"
+                  className="flex-1 py-3 px-4 bg-white/5 border border-white/10 text-gray-300 font-medium rounded-xl btn-interactive hover:bg-white/10 transition-all"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-50"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e] font-bold rounded-xl btn-interactive hover:scale-[1.02] transition-all disabled:opacity-50"
                 >
                   {editLoading ? "Menyimpan..." : "Simpan"}
                 </button>
