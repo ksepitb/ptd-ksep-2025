@@ -98,7 +98,7 @@ export default async function KajasepPage({ searchParams }: PageProps) {
         </div>
 
         <KajasepList
-          initialKajaseps={kajasepList.map((k) => ({
+          initialKajaseps={kajasepList.map((k: { id: string; name: string; jurusan: string; mbti: string; hobby: string; tigaKata: string; photoUrl: string | null; description: string | null; amountDejasep: number; idLine: string; instagram: string; preferensiDejasep: string; _count: { chosenBy: number } }) => ({
             id: k.id,
             name: k.name,
             jurusan: k.jurusan,
