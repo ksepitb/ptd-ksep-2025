@@ -40,7 +40,7 @@ export default async function DejasepPage() {
   const maxChoosers = kajasep.amountDejasep + 1;
 
   // Transform dejaseps for client component
-  const dejaseps = kajasep.chosenBy.map((d) => ({
+  const dejaseps = kajasep.chosenBy.map((d: { id: string; name: string; nomorCaksep: string; fakultas: string; status: string }) => ({
     id: d.id,
     name: d.name,
     nomorCaksep: d.nomorCaksep,
