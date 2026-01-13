@@ -199,8 +199,8 @@ export default function KajasepList({
                 key={kajasep.id}
                 onClick={() => setSelectedKajasep(kajasep)}
                 className={`cursor-pointer backdrop-blur-xl bg-white/5 border rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] ${isChosen
-                    ? "border-[#A3863D]/50 bg-[#A3863D]/10"
-                    : "border-white/10 hover:border-white/20"
+                  ? "border-[#A3863D]/50 bg-[#A3863D]/10"
+                  : "border-white/10 hover:border-white/20"
                   }`}
               >
                 <div className="flex gap-4">
@@ -238,8 +238,8 @@ export default function KajasepList({
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="text-lg font-bold text-white mb-0.5 truncate">
+                      <div className="min-w-0 max-w-[200px]">
+                        <h3 className="text-lg font-bold text-white mb-0.5 truncate" title={kajasep.name}>
                           {kajasep.name}
                         </h3>
                         <p className="text-gray-400 text-sm truncate">{kajasep.jurusan}</p>
@@ -248,10 +248,10 @@ export default function KajasepList({
                       {/* Status Badge */}
                       <span
                         className={`flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${isChosen
-                            ? "bg-[#A3863D]/30 text-[#FFEED2] border border-[#A3863D]/50"
-                            : isFull
-                              ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                              : "bg-green-500/20 text-green-400 border border-green-500/30"
+                          ? "bg-[#A3863D]/30 text-[#FFEED2] border border-[#A3863D]/50"
+                          : isFull
+                            ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                            : "bg-green-500/20 text-green-400 border border-green-500/30"
                           }`}
                       >
                         {isChosen ? "✓ Dipilih" : `${kajasep.currentChoosers}/${maxChoosers}`}
@@ -262,9 +262,6 @@ export default function KajasepList({
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       <span className="inline-flex items-center px-2 py-0.5 bg-white/5 rounded text-xs text-gray-400">
                         {kajasep.mbti}
-                      </span>
-                      <span className="inline-flex items-center px-2 py-0.5 bg-white/5 rounded text-xs text-gray-400">
-                        {kajasep.hobby}
                       </span>
                     </div>
                   </div>
@@ -287,18 +284,49 @@ export default function KajasepList({
           </button>
 
           <div className="flex items-center gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`w-10 h-10 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                    ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e]"
-                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                  }`}
-              >
-                {page}
-              </button>
-            ))}
+            {(() => {
+              const pages: (number | string)[] = [];
+              const showEllipsisStart = currentPage > 3;
+              const showEllipsisEnd = currentPage < totalPages - 2;
+
+              // Always show first page
+              pages.push(1);
+
+              if (showEllipsisStart) {
+                pages.push('...');
+              }
+
+              // Show pages around current page
+              for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                if (!pages.includes(i)) pages.push(i);
+              }
+
+              if (showEllipsisEnd) {
+                pages.push('...');
+              }
+
+              // Always show last page
+              if (totalPages > 1 && !pages.includes(totalPages)) {
+                pages.push(totalPages);
+              }
+
+              return pages.map((page, idx) =>
+                typeof page === 'string' ? (
+                  <span key={`ellipsis-${idx}`} className="px-2 text-gray-500">...</span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-10 h-10 rounded-xl font-medium transition-all duration-300 ${page === currentPage
+                      ? "bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#1a1a2e]"
+                      : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                      }`}
+                  >
+                    {page}
+                  </button>
+                )
+              );
+            })()}
           </div>
 
           <button
