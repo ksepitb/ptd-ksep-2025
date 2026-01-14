@@ -220,7 +220,7 @@ export default function NavbarClient({ user }: { user: UserData }) {
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="inset-shadow-sm inset-shadow-black mt-4 text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-3 px-12"
+                className="inset-shadow-sm inset-shadow-black mt-4 text-base sm:text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-2.5 sm:py-3 px-8 sm:px-12 max-w-[85vw] text-center break-words"
               >
                 {user.userName}
               </Link>
@@ -229,7 +229,7 @@ export default function NavbarClient({ user }: { user: UserData }) {
                   setMobileMenuOpen(false);
                   handleSignOut();
                 }}
-                className="text-white/70 hover:text-white font-medium text-lg"
+                className="text-white/70 hover:text-white font-medium text-base sm:text-lg"
               >
                 Logout
               </button>
@@ -238,7 +238,7 @@ export default function NavbarClient({ user }: { user: UserData }) {
             <Link
               href="/sign-in"
               onClick={() => setMobileMenuOpen(false)}
-              className="inset-shadow-sm inset-shadow-black mt-8 text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-3 px-12"
+              className="inset-shadow-sm inset-shadow-black mt-8 text-base sm:text-xl font-bold bg-gradient-to-r from-[#FFEED2] to-[#A3863D] text-[#36290A] rounded-full py-2.5 sm:py-3 px-8 sm:px-12"
             >
               Sign In
             </Link>
